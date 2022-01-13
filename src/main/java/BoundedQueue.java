@@ -1,4 +1,8 @@
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAmount;
 import java.util.PriorityQueue;
+import java.util.concurrent.*;
 
 public class BoundedQueue<T> {
 
@@ -29,6 +33,30 @@ public class BoundedQueue<T> {
   public int size(){
     return this.size;
   }
+
+  public boolean tryEnqueue (T element, int timeOutMSec){
+    LocalDateTime start = LocalDateTime.now();
+    LocalDateTime checkPoint = LocalDateTime.now();
+
+    if(checkPoint.minusNanos(start.getNano()).getSecond() > timeOutMSec)
+      return false;
+
+    enqueue(element);
+    return true;
+  }
+
+  public boolean tryDequeue (int timeOutMSec){
+    LocalDateTime start = LocalDateTime.now();
+    LocalDateTime checkPoint = LocalDateTime.now();
+
+    if(checkPoint.minusNanos(start.getNano()).getSecond() > timeOutMSec)
+      return false;
+
+    System.out.println(dequeue());
+    return true;
+  }
+
+
 
   public PriorityQueue<T> getQueue() {
     return queue;
